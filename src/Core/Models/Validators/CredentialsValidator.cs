@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-
 using Template.Core.Models.Dtos;
 
 namespace Template.Core.Models.Validators
@@ -9,8 +8,8 @@ namespace Template.Core.Models.Validators
         public CredentialsValidator()
         {
             this.RuleFor(m => m.UserName)
-                .NotEmpty();
-                // .EmailAddress();
+                .NotEmpty()
+                .EmailAddress();
 
             this.RuleFor(m => m.Password)
                 .NotEmpty()
