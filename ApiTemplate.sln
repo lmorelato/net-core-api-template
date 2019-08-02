@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Api", "src\Api\Tem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Data", "src\Data\Template.Data.csproj", "{DD0CC1B9-FB92-451F-8B16-6F37E307DCDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Core", "src\Service\Template.Core.csproj", "{F9588910-5B3D-412B-83EE-9C51DBCC898A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Core", "src\Core\Template.Core.csproj", "{F9588910-5B3D-412B-83EE-9C51DBCC898A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template.Shared", "src\Shared\Template.Shared.csproj", "{40EAAE46-9719-4777-99EC-D4F1C0DB9548}"
 EndProject
