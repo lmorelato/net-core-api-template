@@ -6,14 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.6.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.Extensions.Identity.Core">
       <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.identity.core\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Identity.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Localization.Abstractions">
-      <HintPath>C:\Users\lmorelato\.nuget\packages\microsoft.extensions.localization.abstractions\2.1.0\lib\netstandard2.0\Microsoft.Extensions.Localization.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
 
