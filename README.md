@@ -1,5 +1,7 @@
-# net-core-api-template
-My base .Net Core 2.2+ template for creating web APIs, it includes:
+# net-core-api-template (under development)
+
+My personal .Net Core 2.2+ template for creating web APIs, it includes:
+
 - EF Core supporting:
   - Data Audit 
   - Data Tracking (who did what?)
