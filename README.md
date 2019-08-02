@@ -2,6 +2,7 @@
 
 My personal .Net Core 2.2+ template for creating web APIs, it includes:
 
+- Traditional N-Layer architecture
 - EF Core supporting:
   - Data Audit 
   - Data Tracking (who did what?)
