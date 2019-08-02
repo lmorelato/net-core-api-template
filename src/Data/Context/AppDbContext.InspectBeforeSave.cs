@@ -54,7 +54,7 @@ namespace Template.Data.Context
 
                 if (entry.Entity is ITenant)
                 {
-                    entry.Property("TenantId").CurrentValue = this.currentSession.TenantId;
+                    entry.Property("TenantId").CurrentValue = this.currentSession.TenantId.GetValueOrDefault();
                 }
             }
         }

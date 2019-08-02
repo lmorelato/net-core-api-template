@@ -60,9 +60,9 @@ namespace Template.Core.Services
 
             var claims = new[]
              {
-                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                  new Claim(Constants.ClaimTypes.Id, user.Id.ToString(), ClaimValueTypes.Integer32),
                  new Claim(Constants.ClaimTypes.Role, roles.Join()),
+                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                  new Claim(JwtRegisteredClaimNames.Jti, this.tokenSettings.JtiGenerator),
                  new Claim(JwtRegisteredClaimNames.Iat, issuedAt.ToString(), ClaimValueTypes.Integer64)
              };

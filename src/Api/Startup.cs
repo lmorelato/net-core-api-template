@@ -9,6 +9,7 @@ using Serilog;
 using Template.Api.Extensions.ApplicationBuilder;
 using Template.Api.Extensions.HostingEnvironment;
 using Template.Api.Extensions.ServicesCollection;
+using Template.Api.Middleware;
 using Template.Core.Profiles;
 
 namespace Template.Api
@@ -50,9 +51,9 @@ namespace Template.Api
                     .AllowAnyMethod()
                     .AllowAnyHeader())
                 .UseAuthentication()
+                .UseMiddleware<ConfigureSessionMiddleware>()
                 .UseLocalization()
                 .UseSwaggerApi()
-                .UseLocalization()
                 .UseMvc();
         }
     }

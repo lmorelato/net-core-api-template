@@ -7,7 +7,8 @@
             public const string
                 Any = "any",
                 Admin = "admin",
-                User = "user";
+                User = "user",
+                Tenant = "tenant";
         }
 
         public static class Database
@@ -20,10 +21,8 @@
         public static class ClaimTypes
         {
             public const string
-                Id = "identity/claims/id",
-                UserName = "identity/claims/username",
-                Name = "identity/claims/name",
-                Role = "identity/claims/role";
+                Id = "id",
+                Role = "role";
         }
     }
 }

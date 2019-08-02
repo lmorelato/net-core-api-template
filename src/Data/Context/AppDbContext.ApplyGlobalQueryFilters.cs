@@ -36,7 +36,7 @@ namespace Template.Data.Context
         private void SetGlobalQueryForTenant<T>(ModelBuilder builder) where T : class, ITenant
         {
             builder.Entity<T>().HasQueryFilter(item => this.currentSession.DisableTenantFilter ||
-                                                       EF.Property<int>(item, "TenantId") == this.currentSession.TenantId);
+                                                       EF.Property<int>(item, "TenantId") == this.currentSession.TenantId.GetValueOrDefault());
         }
 
         private void InvokeMethod(object obj, Type type, string methodName)

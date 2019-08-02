@@ -6,7 +6,7 @@ namespace Template.Shared.Session
     {
         int UserId { get; set; }
 
-        int TenantId { get; set; }
+        int? TenantId { get; set; }
 
         List<string> Roles { get; set; }
 
