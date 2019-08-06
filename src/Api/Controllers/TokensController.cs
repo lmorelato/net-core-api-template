@@ -12,18 +12,18 @@ namespace Template.Api.Controllers
     public class TokensController : AppControllerBase
     {
         private readonly ITokenService tokenService;
-        private readonly ICurrentSession currentSession;
+        private readonly IUserSession userSession;
 
-        public TokensController(ITokenService tokenService, ICurrentSession currentSession)
+        public TokensController(ITokenService tokenService, IUserSession userSession)
         {
             this.tokenService = tokenService;
-            this.currentSession = currentSession;
+            this.userSession = userSession;
         }
 
         [HttpPost]
         public async Task<ActionResult<TokenDto>> AuthenticateAsync([FromBody]CredentialsDto credentials)
         {
-            this.currentSession.DisableTenantFilter = true;
+            this.userSession.DisableTenantFilter = true;
             var result = await this.tokenService.AuthenticateAsync(credentials);
             return result;
         }

@@ -3,11 +3,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Template.Core.Exceptions;
+using Template.Core.Helpers;
 using Template.Core.Models.Dtos;
 using Template.Core.Services.Interfaces;
 using Template.Data.Context;
 using Template.Data.Entities.Identity;
 using Template.Localization;
+using Template.Shared;
 
 namespace Template.Core.Services
 {
@@ -33,14 +35,15 @@ namespace Template.Core.Services
             this.mapper = mapper;
         }
 
-        public async Task<UserDto> AddAsync(CredentialsDto credentials)
+        public async Task<UserDto> GetAsync(int id)
         {
-            var newUser = new User
-            {
-                UserName = credentials.UserName,
-                Email = credentials.UserName,
-                Culture = "en-US"
-            };
+            var user = await this.FindAsync(id);
+            return this.mapper.Map<UserDto>(user);
+        }
+
+       public async Task<UserDto> AddAsync(CredentialsDto credentials)
+        {
+            var newUser = this.mapper.Map<User>(credentials);
 
             using (var transaction = await this.context.Database.BeginTransactionAsync())
             {
@@ -48,6 +51,7 @@ namespace Template.Core.Services
                 {
                     var result = await this.userManager.CreateAsync(newUser, credentials.Password);
                     this.ThrowIfNotSucceed(result);
+                    await this.AddToRoleAsync(newUser, Constants.Roles.User);
                     transaction.Commit();
                 }
                 catch (IdentityResultException)
@@ -60,16 +64,45 @@ namespace Template.Core.Services
             return this.mapper.Map<UserDto>(newUser);
         }
 
-        public async Task<UserDto> GetAsync(int id)
+        public async Task UpdateAsync(UserDto userDto)
         {
-            var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var userEntry = await this.FindAsync(userDto.Id);
+            userEntry.FullName = userDto.FullName;
+            userEntry.Culture = LocalizationHelper.GetClosestSupportedCultureName();
+
+            this.context.Entry(userEntry).State = EntityState.Modified;
+            this.context.EnsureAudit();
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCultureAsync(UserDto userDto)
+        {
+            var userEntry = await this.FindAsync(userDto.Id);
+            userEntry.Culture = LocalizationHelper.GetClosestSupportedCultureName();
+
+            this.context.Entry(userEntry).State = EntityState.Modified;
+            this.context.EnsureAudit();
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(int userId)
+        {
+            var userEntry = await this.FindAsync(userId);
+            this.context.Users.Remove(userEntry);
+            this.context.EnsureAudit();
+            await this.context.SaveChangesAsync();
+        }
+
+        private async Task<User> FindAsync(int id)
+        {
+            var user = await this.userManager.Users.FirstAsync(u => u.Id == id);
             if (user == null)
             {
                 var message = this.localizer.GetAndApplyKeys("NotFound", "User");
                 throw new NotFoundException(message);
             }
 
-            return this.mapper.Map<UserDto>(user);
+            return user;
         }
 
         private async Task AddToRoleAsync(User user, string role)

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Template.Api.Extensions.ClaimsPrincipal;
 using Template.Shared;
-using Template.Shared.Helpers;
 using Template.Shared.Session;
 
 namespace Template.Api.Middleware
@@ -11,28 +11,29 @@ namespace Template.Api.Middleware
     public class ConfigureSessionMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly string userNameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        private readonly string rolesClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
         public ConfigureSessionMiddleware(RequestDelegate next)
         {
             this.next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, ICurrentSession session)
+        public async Task InvokeAsync(HttpContext context, IUserSession currentUser)
         {
-            if (context.User.Identities.Any(id => id.IsAuthenticated))
+            if (context.User.Identities.Any(user => user.IsAuthenticated))
             {
-                session.UserId = ClaimsHelper.GetClaim<int>(context.User, Constants.ClaimTypes.Id);
-                session.Roles = ClaimsHelper.GetClaims<string>(context.User, "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-                session.UserName = ClaimsHelper.GetClaim<string>(context.User, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+                currentUser.UserId = context.User.GetClaim<int>(Constants.ClaimTypes.Id);
+                currentUser.UserName = context.User.GetClaim<string>(this.userNameClaimType);
+                currentUser.Roles = context.User.GetClaims<string>(this.rolesClaimType);
 
-                // if is a tenant, enable tenant filter
-                if (session.Roles.Contains(Constants.Roles.Tenant))
+                if (currentUser.IsInRole(Constants.Roles.Tenant))
                 {
-                    session.TenantId = session.UserId;
+                    currentUser.TenantId = currentUser.UserId;
                 }
                 else
                 {
-                    session.DisableTenantFilter = true;
+                    currentUser.DisableTenantFilter = true;
                 }
             }
 

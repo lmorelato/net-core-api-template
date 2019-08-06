@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-
 using Template.Shared.Session;
 
 namespace Template.Api.Controllers.Bases
@@ -7,11 +6,11 @@ namespace Template.Api.Controllers.Bases
     [Authorize]
     public abstract class AuthControllerBase : AppControllerBase
     {
-        protected AuthControllerBase(ICurrentSession currentSession)
+        protected AuthControllerBase(IUserSession currentUser)
         {
-            this.CurrentSession = currentSession;
+            this.CurrentUser = currentUser;
         }
 
-        protected ICurrentSession CurrentSession { get; }
+        protected IUserSession CurrentUser { get; }
     }
 }

@@ -8,7 +8,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+
+using Template.Api.Controllers.Bases;
 using Template.Api.Extensions.HttpResponse;
+using Template.Api.Filters;
 using Template.Api.Middleware;
 using Template.Core.Exceptions;
 using Template.Core.Exceptions.Interfaces;

@@ -12,9 +12,7 @@ namespace Template.Api.Controllers
     {
         private readonly IUserService userService;
 
-        public UsersController(
-            IUserService userService,
-            ICurrentSession currentSession) : base(currentSession)
+        public UsersController(IUserService userService, IUserSession currentUser) : base(currentUser)
         {
             this.userService = userService;
         }
@@ -28,6 +26,9 @@ namespace Template.Api.Controllers
         /// <response code="401">Unauthorized</response>    
         /// <response code="404">If not found the user</response>    
         [HttpGet("{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<UserDto>> GetAsync([FromRoute]int id)
         {
             var result = await this.userService.GetAsync(id);
@@ -35,7 +36,7 @@ namespace Template.Api.Controllers
         }
 
         /// <summary>
-        /// Adds a new user
+        /// Add user
         /// </summary>
         /// <param name="credentials">User credentials</param>
         /// <returns>A newly created user</returns>
@@ -49,6 +50,69 @@ namespace Template.Api.Controllers
         {
             var result = await this.userService.AddAsync(credentials);
             return this.CreatedAtAction(nameof(this.GetAsync), new { id = result.Id }, result);
+        }
+
+        /// <summary>
+        /// Update user
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <param name="userDto">User data</param>
+        /// <returns>No content</returns>
+        /// <response code="204">Returns no content</response>
+        /// <response code="400">If the user data is invalid</response>
+        /// <response code="401">Unauthorized</response> 
+        /// <response code="404">If not found the user</response>     
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutAsync(
+            [FromRoute] int id,
+            [FromBody][Bind("FullName, Culture")]UserDto userDto)
+        {
+            userDto.Id = id;
+            await this.userService.UpdateAsync(userDto);
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// Update user's culture
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <param name="userDto">User data</param>
+        /// <returns>No content</returns>
+        /// <response code="204">Returns no content</response>
+        /// <response code="400">If the user data is invalid</response>
+        /// <response code="401">Unauthorized</response> 
+        /// <response code="404">If not found the user</response>     
+        [HttpPatch]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PatchCultureAsync([FromBody][Bind("Culture")]UserDto userDto)
+        {
+            await this.userService.UpdateCultureAsync(userDto);
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// Remove user
+        /// </summary>
+        /// <param name="userId">User data</param>
+        /// <returns>No content</returns>
+        /// <response code="204">Returns no content</response>
+        /// <response code="400">If the user data is invalid</response>    
+        /// <response code="404">If not found the user</response>  
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteAsync([FromRoute] int userId)
+        {
+            await this.userService.RemoveAsync(userId);
+            return this.NoContent();
         }
     }
 }

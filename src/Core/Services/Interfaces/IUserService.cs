@@ -8,6 +8,12 @@ namespace Template.Core.Services.Interfaces
     {
         Task<UserDto> AddAsync(CredentialsDto credentials);
 
+        Task UpdateAsync(UserDto userDto);
+
+        Task UpdateCultureAsync(UserDto userDto);
+
+        Task RemoveAsync(int userId);
+
         Task<UserDto> GetAsync(int id);
     }
 }

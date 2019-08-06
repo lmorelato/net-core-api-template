@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Template.Data.Entities;
 using Template.Data.Entities.Interfaces;
 
 namespace Template.Data.Context
@@ -15,6 +16,10 @@ namespace Template.Data.Context
             this.CheckReadOnlyEntries();
 
             var timestamp = DateTime.UtcNow;
+            if (this.ensureAutoHistory)
+            {
+                this.EnsureAutoHistory(timestamp);
+            }
 
             foreach (var entry in this.ChangeTracker.Entries())
             {
@@ -28,6 +33,15 @@ namespace Template.Data.Context
                     this.SetTrackedEntity(entry, timestamp);
                 }
             }
+        }
+
+        private void EnsureAutoHistory(DateTime timestamp)
+        {
+            this.EnsureAutoHistory(() => new AuditLogs
+            {
+                ModifiedById = this.userSession.UserId,
+                ModifiedOn = timestamp
+            });
         }
 
         private void SetSoftDeleteEntity(EntityEntry entry)
@@ -44,17 +58,17 @@ namespace Template.Data.Context
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.State == EntityState.Deleted)
             {
                 entry.CurrentValues["ModifiedOn"] = timestamp;
-                entry.CurrentValues["ModifiedById"] = this.currentSession.UserId;
+                entry.CurrentValues["ModifiedById"] = this.userSession.UserId;
             }
 
             if (entry.State == EntityState.Added)
             {
                 entry.CurrentValues["CreatedOn"] = timestamp;
-                entry.CurrentValues["CreatedById"] = this.currentSession.UserId;
+                entry.CurrentValues["CreatedById"] = this.userSession.UserId;
 
                 if (entry.Entity is ITenant)
                 {
-                    entry.Property("TenantId").CurrentValue = this.currentSession.TenantId.GetValueOrDefault();
+                    entry.Property("TenantId").CurrentValue = this.userSession.TenantId.GetValueOrDefault();
                 }
             }
         }

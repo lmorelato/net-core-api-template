@@ -29,14 +29,14 @@ namespace Template.Data.Context
 
         private void SetGlobalQueryForSoftDelete<T>(ModelBuilder builder) where T : class, ISoftDelete
         {
-            builder.Entity<T>().HasQueryFilter(item => this.currentSession.DisableSoftDeleteFilter ||
+            builder.Entity<T>().HasQueryFilter(item => this.userSession.DisableSoftDeleteFilter ||
                                                        !EF.Property<bool>(item, "IsDeleted"));
         }
 
         private void SetGlobalQueryForTenant<T>(ModelBuilder builder) where T : class, ITenant
         {
-            builder.Entity<T>().HasQueryFilter(item => this.currentSession.DisableTenantFilter ||
-                                                       EF.Property<int>(item, "TenantId") == this.currentSession.TenantId.GetValueOrDefault());
+            builder.Entity<T>().HasQueryFilter(item => this.userSession.DisableTenantFilter ||
+                                                       EF.Property<int>(item, "TenantId") == this.userSession.TenantId.GetValueOrDefault());
         }
 
         private void InvokeMethod(object obj, Type type, string methodName)

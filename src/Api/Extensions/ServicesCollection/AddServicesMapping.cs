@@ -15,7 +15,7 @@ namespace Template.Api.Extensions.ServicesCollection
             services.AddScoped<RoleManager<Role>>();
             services.AddScoped<UserManager<User>>();
 
-            services.AddScoped<ICurrentSession, CurrentSession>();
+            services.AddScoped<IUserSession, UserSession>();
             services.AddScoped<ISharedResources, SharedResources>();
 
             services.AddScoped<ITokenService, TokenService>();

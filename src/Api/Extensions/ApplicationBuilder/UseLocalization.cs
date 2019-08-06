@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
-using Template.Shared.Helpers;
+using Template.Core.Helpers;
 
 namespace Template.Api.Extensions.ApplicationBuilder
 {
@@ -10,11 +10,11 @@ namespace Template.Api.Extensions.ApplicationBuilder
         // https://www.jeffogata.com/asp-net-core-localization-culture/
         public static IApplicationBuilder UseLocalization(this IApplicationBuilder app)
         {
-            var supportedCultures = CultureInfoHelper.SupportedCultures.Values.ToList();
+            var supportedCultures = LocalizationHelper.SupportedCultures.Values.ToList();
 
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture(CultureInfoHelper.DefaultCultureName),
+                DefaultRequestCulture = new RequestCulture(LocalizationHelper.DefaultCultureName),
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures
             });

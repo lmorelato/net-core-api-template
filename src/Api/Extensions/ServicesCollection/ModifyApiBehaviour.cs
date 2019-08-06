@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+
+using Template.Api.Controllers.Bases;
 using Template.Api.Middleware;
 
 namespace Template.Api.Extensions.ServicesCollection
@@ -12,7 +14,7 @@ namespace Template.Api.Extensions.ServicesCollection
             services.Configure<ApiBehaviorOptions>(
                 options =>
                 {
-                    options.InvalidModelStateResponseFactory = ctx => new CustomObjectResult(HttpStatusCode.BadRequest, ctx.ModelState);
+                    options.InvalidModelStateResponseFactory = ctx => new ObjectResultBase(HttpStatusCode.BadRequest, ctx.ModelState);
                 });
 
             return services;
