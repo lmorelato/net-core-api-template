@@ -1,7 +1,7 @@
 ﻿using System;
 
 using AutoMapper;
-using Template.Core.Models.Dtos;
+using Template.Core.Models.Dtos.Bases;
 using Template.Data.Entities.Interfaces;
 
 namespace Template.Core.Profiles

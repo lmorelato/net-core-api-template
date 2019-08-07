@@ -28,7 +28,7 @@ namespace Template.Data.Context
                     this.SetSoftDeleteEntity(entry);
                 }
 
-                if (entry.Entity is ITracked)
+                if (entry.Entity is IFullTracked || entry.Entity is IDateTimeTracked)
                 {
                     this.SetTrackedEntity(entry, timestamp);
                 }
@@ -58,13 +58,21 @@ namespace Template.Data.Context
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.State == EntityState.Deleted)
             {
                 entry.CurrentValues["ModifiedOn"] = timestamp;
-                entry.CurrentValues["ModifiedById"] = this.userSession.UserId;
+
+                if (entry.Entity is IFullTracked)
+                {
+                    entry.CurrentValues["ModifiedById"] = this.userSession.UserId;
+                }
             }
 
             if (entry.State == EntityState.Added)
             {
                 entry.CurrentValues["CreatedOn"] = timestamp;
-                entry.CurrentValues["CreatedById"] = this.userSession.UserId;
+
+                if (entry.Entity is IFullTracked)
+                {
+                    entry.CurrentValues["CreatedById"] = this.userSession.UserId;
+                }
 
                 if (entry.Entity is ITenant)
                 {

@@ -1,6 +1,6 @@
 ﻿namespace Template.Data.Entities.Interfaces
 {
-    public interface ITracked : IBaseEntity
+    public interface IFullTracked : IBaseEntity
     {
     }
 }

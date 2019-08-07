@@ -26,7 +26,7 @@ namespace Template.Core.Helpers
         public static string GetClosestSupportedCultureName()
         {
             var culture = GetClosestSupportedCulture(CultureInfo.CurrentCulture.Name);
-            return culture?.Name;
+            return culture.Name;
         }
 
         private static CultureInfo GetClosestSupportedCulture(string code)

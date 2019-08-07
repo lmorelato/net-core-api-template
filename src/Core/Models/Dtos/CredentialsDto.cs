@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using Template.Core.Models.Dtos.Bases;
 using Template.Localization.Resources;
 
 namespace Template.Core.Models.Dtos

@@ -83,13 +83,14 @@ namespace Template.Core.Services
             var tokenResult = new TokenDto
             {
                 Token = encodedToken,
+                IssuedAt = this.tokenSettings.IssuedAt,
+                Expires = this.tokenSettings.Expiration,
                 Id = user.Id,
                 Name = user.FullName,
                 UserName = user.UserName,
-                Role = roles.Join(),
-                IssuedAt = this.tokenSettings.IssuedAt,
-                Expires = this.tokenSettings.Expiration
+                Role = roles.Join()
             };
+
             return tokenResult;
         }
 

@@ -3,9 +3,9 @@ using Template.Core.Models.Dtos;
 
 namespace Template.Core.Models.Validators
 {
-    public class CredentialsValidator : AbstractValidator<CredentialsDto>
+    public class CredentialsDtoValidator : AbstractValidator<CredentialsDto>
     {
-        public CredentialsValidator()
+        public CredentialsDtoValidator()
         {
             this.RuleFor(m => m.UserName)
                 .NotEmpty()

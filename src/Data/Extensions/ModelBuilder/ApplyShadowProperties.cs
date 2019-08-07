@@ -16,9 +16,14 @@ namespace Template.Data.Extensions.ModelBuilder
             {
                 var clrType = entityType.ClrType;
 
-                if (typeof(ITracked).IsAssignableFrom(clrType))
+                if (typeof(IFullTracked).IsAssignableFrom(clrType))
                 {
-                    InvokeMethod(modelBuilder, clrType, nameof(SetAuditingShadowProperties));
+                    InvokeMethod(modelBuilder, clrType, nameof(SetFullTrackedShadowProperties));
+                }
+
+                if (typeof(IDateTimeTracked).IsAssignableFrom(clrType))
+                {
+                    InvokeMethod(modelBuilder, clrType, nameof(SetDateTimeTrackedProperties));
                 }
 
                 if (typeof(ISoftDelete).IsAssignableFrom(clrType))
@@ -28,7 +33,13 @@ namespace Template.Data.Extensions.ModelBuilder
             }
         }
 
-        private static void SetAuditingShadowProperties<T>(Microsoft.EntityFrameworkCore.ModelBuilder builder) where T : class, ITracked
+        private static void SetDateTimeTrackedProperties<T>(Microsoft.EntityFrameworkCore.ModelBuilder builder) where T : class, IDateTimeTracked
+        {
+            builder.Entity<T>().Property<DateTime>("CreatedOn").HasDefaultValueSql("GetUtcDate()");
+            builder.Entity<T>().Property<DateTime>("ModifiedOn").HasDefaultValueSql("GetUtcDate()");
+        }
+
+        private static void SetFullTrackedShadowProperties<T>(Microsoft.EntityFrameworkCore.ModelBuilder builder) where T : class, IFullTracked
         {
             builder.Entity<T>().Property<DateTime>("CreatedOn").HasDefaultValueSql("GetUtcDate()");
             builder.Entity<T>().Property<DateTime>("ModifiedOn").HasDefaultValueSql("GetUtcDate()");

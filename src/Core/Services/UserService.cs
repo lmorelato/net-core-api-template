@@ -41,9 +41,10 @@ namespace Template.Core.Services
             return this.mapper.Map<UserDto>(user);
         }
 
-       public async Task<UserDto> AddAsync(CredentialsDto credentials)
+        public async Task<UserDto> AddAsync(CredentialsDto credentials)
         {
             var newUser = this.mapper.Map<User>(credentials);
+            newUser.Culture = LocalizationHelper.GetClosestSupportedCultureName();
 
             using (var transaction = await this.context.Database.BeginTransactionAsync())
             {
@@ -70,17 +71,15 @@ namespace Template.Core.Services
             userEntry.FullName = userDto.FullName;
             userEntry.Culture = LocalizationHelper.GetClosestSupportedCultureName();
 
-            this.context.Entry(userEntry).State = EntityState.Modified;
             this.context.EnsureAudit();
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateCultureAsync(UserDto userDto)
+        public async Task UpdateCultureAsync(int userId)
         {
-            var userEntry = await this.FindAsync(userDto.Id);
+            var userEntry = await this.FindAsync(userId);
             userEntry.Culture = LocalizationHelper.GetClosestSupportedCultureName();
 
-            this.context.Entry(userEntry).State = EntityState.Modified;
             this.context.EnsureAudit();
             await this.context.SaveChangesAsync();
         }
@@ -95,14 +94,14 @@ namespace Template.Core.Services
 
         private async Task<User> FindAsync(int id)
         {
-            var user = await this.userManager.Users.FirstAsync(u => u.Id == id);
-            if (user == null)
+            var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user != null)
             {
-                var message = this.localizer.GetAndApplyKeys("NotFound", "User");
-                throw new NotFoundException(message);
+                return user;
             }
 
-            return user;
+            var message = this.localizer.GetAndApplyKeys("NotFound", "User");
+            throw new NotFoundException(message);
         }
 
         private async Task AddToRoleAsync(User user, string role)

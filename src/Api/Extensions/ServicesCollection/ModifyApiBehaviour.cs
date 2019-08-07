@@ -1,9 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-
 using Template.Api.Controllers.Bases;
-using Template.Api.Middleware;
 
 namespace Template.Api.Extensions.ServicesCollection
 {

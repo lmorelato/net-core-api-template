@@ -24,12 +24,9 @@ namespace Template.Api.Extensions.ClaimsPrincipal
                 .Where(c => c.Type == type && !string.IsNullOrEmpty(c.Value))
                 .ToList();
 
-            if (claims.Any())
-            {
-                return (List<T>)claims.Select(c => (T)Convert.ChangeType(c.Value, typeof(T)));
-            }
-
-            return new List<T>();
+            return claims.Any() ?
+                       claims.Select(c => (T)Convert.ChangeType(c.Value, typeof(T))).ToList() :
+                       new List<T>();
         }
     }
 }

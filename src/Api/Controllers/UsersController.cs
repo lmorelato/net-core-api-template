@@ -31,6 +31,11 @@ namespace Template.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<UserDto>> GetAsync([FromRoute]int id)
         {
+            if (id <= 0)
+            {
+                return this.BadRequest(nameof(id));
+            }
+
             var result = await this.userService.GetAsync(id);
             return this.Ok(result);
         }
@@ -69,8 +74,13 @@ namespace Template.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutAsync(
             [FromRoute] int id,
-            [FromBody][Bind("FullName, Culture")]UserDto userDto)
+            [FromBody] UserDto userDto)
         {
+            if (id <= 0)
+            {
+                return this.BadRequest(nameof(id));
+            }
+
             userDto.Id = id;
             await this.userService.UpdateAsync(userDto);
             return this.NoContent();
@@ -80,27 +90,31 @@ namespace Template.Api.Controllers
         /// Update user's culture
         /// </summary>
         /// <param name="id">User Id</param>
-        /// <param name="userDto">User data</param>
         /// <returns>No content</returns>
         /// <response code="204">Returns no content</response>
         /// <response code="400">If the user data is invalid</response>
         /// <response code="401">Unauthorized</response> 
         /// <response code="404">If not found the user</response>     
-        [HttpPatch]
+        [HttpPatch("{id:int}/culture")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PatchCultureAsync([FromBody][Bind("Culture")]UserDto userDto)
+        public async Task<IActionResult> PatchCultureAsync([FromRoute] int id)
         {
-            await this.userService.UpdateCultureAsync(userDto);
+            if (id <= 0)
+            {
+                return this.BadRequest(nameof(id));
+            }
+
+            await this.userService.UpdateCultureAsync(id);
             return this.NoContent();
         }
 
         /// <summary>
         /// Remove user
         /// </summary>
-        /// <param name="userId">User data</param>
+        /// <param name="id">User id</param>
         /// <returns>No content</returns>
         /// <response code="204">Returns no content</response>
         /// <response code="400">If the user data is invalid</response>    
@@ -109,9 +123,14 @@ namespace Template.Api.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteAsync([FromRoute] int userId)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            await this.userService.RemoveAsync(userId);
+            if (id <= 0)
+            {
+                return this.BadRequest(nameof(id));
+            }
+
+            await this.userService.RemoveAsync(id);
             return this.NoContent();
         }
     }

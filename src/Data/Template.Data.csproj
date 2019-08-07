@@ -5,14 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190721140639_inital.cs" />
-    <Compile Remove="Migrations\20190721140639_inital.Designer.cs" />
-    <Compile Remove="Migrations\20190721145548_testv0.cs" />
-    <Compile Remove="Migrations\20190721145548_testv0.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Entities\Configurations\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   

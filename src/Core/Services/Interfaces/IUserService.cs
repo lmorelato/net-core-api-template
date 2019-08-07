@@ -10,7 +10,7 @@ namespace Template.Core.Services.Interfaces
 
         Task UpdateAsync(UserDto userDto);
 
-        Task UpdateCultureAsync(UserDto userDto);
+        Task UpdateCultureAsync(int userId);
 
         Task RemoveAsync(int userId);
 

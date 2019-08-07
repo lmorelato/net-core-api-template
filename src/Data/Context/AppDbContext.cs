@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Template.Data.Entities;
 using Template.Data.Entities.Identity;
 using Template.Data.Extensions.ModelBuilder;
 using Template.Shared.Session;
@@ -23,12 +24,6 @@ namespace Template.Data.Context
             this.ensureAutoHistory = true;
         }
 
-        public override int SaveChanges()
-        {
-            this.InspectBeforeSave();
-            return base.SaveChanges();
-        }
-
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             this.InspectBeforeSave();
@@ -41,17 +36,16 @@ namespace Template.Data.Context
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {
-            this.InspectBeforeSave();
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.ApplyIdentityConfiguration();
             builder.ApplyShadowProperties();
+            builder.EnableAutoHistory<AuditLogs>(o =>
+            {
+                o.ChangedMaxLength = 2048 * 2;
+            });
+
             this.ApplyGlobalQueryFilters(builder);
         }
     }

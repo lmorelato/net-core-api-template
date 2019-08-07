@@ -1,4 +1,6 @@
 ﻿
+using Template.Core.Models.Dtos.Bases;
+
 namespace Template.Core.Models.Dtos
 {
     public sealed class UserDto : BaseDto
@@ -9,7 +11,7 @@ namespace Template.Core.Models.Dtos
 
         public string Email { get; set; }
 
-        public bool EmailConfirmed { get; set; }
+        public bool? EmailConfirmed { get; set; }
 
         public string FullName { get; set; }
 
