@@ -41,12 +41,11 @@ namespace Template.Data.Context
             base.OnModelCreating(builder);
             builder.ApplyIdentityConfiguration();
             builder.ApplyShadowProperties();
-            builder.EnableAutoHistory<AuditLogs>(o =>
-            {
-                o.ChangedMaxLength = 2048 * 2;
-            });
+            builder.ApplyConventions();
+            builder.EnableAutoHistory<AuditLogs>(o => { o.ChangedMaxLength = 2048 * 2; });
 
             this.ApplyGlobalQueryFilters(builder);
+            this.ApplyConfigurations(builder);
         }
     }
 }
