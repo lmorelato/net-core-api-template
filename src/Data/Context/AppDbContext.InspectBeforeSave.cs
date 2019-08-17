@@ -8,7 +8,7 @@ using Template.Data.Entities.Interfaces;
 
 namespace Template.Data.Context
 {
-    public sealed partial class AppDbContext
+    public partial class AppDbContext
     {
         // see @ https://trailheadtechnology.com/entity-framework-core-2-1-automate-all-that-boring-boiler-plate/
         private void InspectBeforeSave()
@@ -37,7 +37,7 @@ namespace Template.Data.Context
 
         private void EnsureAutoHistory(DateTime timestamp)
         {
-            this.EnsureAutoHistory(() => new AuditLogs
+            this.EnsureAutoHistory(() => new AuditLog
             {
                 ModifiedById = this.userSession.UserId,
                 ModifiedOn = timestamp

@@ -12,6 +12,8 @@ namespace Template.Shared.Session
 
         string UserName { get; set; }
 
+        string IpAddress { get; set; }
+
         bool DisableTenantFilter { get; set; }
 
         bool DisableSoftDeleteFilter { get; set; }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Template.Data.Entities
 {
-    public class AuditLogs : AutoHistory
+    public class AuditLog : AutoHistory
     {
         public DateTime ModifiedOn { get; set; }
 

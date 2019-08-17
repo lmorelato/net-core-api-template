@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -39,6 +40,15 @@ namespace Template.Api
 
         public void Configure(IApplicationBuilder application, IHostingEnvironment env)
         {
+            if (env.IsDevelopment())
+            {
+                application.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor,
+                    ForwardLimit = 2
+                });
+            }
+
             application
                 .UseExceptionHandler(env.IsTrusted())
                 .UseSerilogRequestLogging()

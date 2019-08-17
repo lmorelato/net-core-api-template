@@ -7,7 +7,7 @@ using Template.Data.Entities.Interfaces;
 namespace Template.Data.Context
 {
     // see @ https://trailheadtechnology.com/entity-framework-core-2-1-automate-all-that-boring-boiler-plate/
-    public sealed partial class AppDbContext
+    public partial class AppDbContext
     {
         private void ApplyGlobalQueryFilters(ModelBuilder modelBuilder)
         {

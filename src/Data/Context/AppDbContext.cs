@@ -9,7 +9,7 @@ using Template.Shared.Session;
 
 namespace Template.Data.Context
 {
-    public sealed partial class AppDbContext : IdentityDbContext<User, Role, int>
+    public partial class AppDbContext : IdentityDbContext<User, Role, int>
     {
         private readonly IUserSession userSession;
         private bool ensureAutoHistory;
@@ -42,7 +42,7 @@ namespace Template.Data.Context
             builder.ApplyIdentityConfiguration();
             builder.ApplyShadowProperties();
             builder.ApplyConventions();
-            builder.EnableAutoHistory<AuditLogs>(o => { o.ChangedMaxLength = 2048 * 2; });
+            builder.EnableAutoHistory<AuditLog>(o => { o.ChangedMaxLength = 2048 * 2; });
 
             this.ApplyGlobalQueryFilters(builder);
             this.ApplyConfigurations(builder);

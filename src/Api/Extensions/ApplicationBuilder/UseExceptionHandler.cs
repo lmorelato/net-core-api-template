@@ -60,15 +60,19 @@ namespace Template.Api.Extensions.ApplicationBuilder
                         modelState.TryAddModelError(error.Code, error.Description);
                     }
 
-                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.BadRequest, modelState);
+                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.BadRequest, modelState, ex);
                     break;
 
-                case NotFoundException _:
-                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.NotFound, exception.Message);
+                case NotFoundException ex:
+                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.NotFound, ex);
                     break;
-               
+
+                case EmailNotConfirmedException ex:
+                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.BadRequest, ex);
+                    break;
+
                 default:
-                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.BadRequest, exception.Message);
+                    problemDetails = ProblemDetailsFactory.New(HttpStatusCode.BadRequest, exception);
                     break;
             }
 

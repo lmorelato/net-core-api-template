@@ -10,26 +10,36 @@ using Template.Core.Exceptions;
 using Template.Core.Models.Dtos;
 using Template.Core.Services.Interfaces;
 using Template.Core.Settings;
+using Template.Data.Context;
+using Template.Data.Entities;
 using Template.Data.Entities.Identity;
 using Template.Localization;
 using Template.Shared;
+using Template.Shared.Session;
 
 namespace Template.Core.Services
 {
     public class TokenService : ITokenService
     {
+        private readonly AppDbContext context;
         private readonly UserManager<User> userManager;
+        private readonly IUserSession userSession;
         private readonly TokenSettings tokenSettings;
         private readonly ISharedResources localizer;
 
         public TokenService(
+            AppDbContext context,
             UserManager<User> userManager,
+            IUserSession userSession,
             IOptions<TokenSettings> tokenSettings,
             ISharedResources localizer)
         {
+            this.context = context;
             this.userManager = userManager;
+            this.userSession = userSession;
             this.tokenSettings = tokenSettings.Value;
             this.localizer = localizer;
+
             this.ThrowIfInvalidSettings(this.tokenSettings);
         }
 
@@ -42,6 +52,11 @@ namespace Template.Core.Services
                 throw new NotFoundException(message);
             }
 
+            if (!user.EmailConfirmed)
+            {
+                // throw new EmailNotConfirmedException(this.localizer.Get("EmailNotConfirmed"));
+            }
+
             var passwordIsValid = await this.userManager.CheckPasswordAsync(user, credentials.Password);
             if (!passwordIsValid)
             {
@@ -50,8 +65,22 @@ namespace Template.Core.Services
 
             var roles = await this.userManager.GetRolesAsync(user);
             var encodedToken = this.GenerateEncodedToken(user, roles);
-            var tokenResult = this.GenerateTokeResult(encodedToken, user, roles);
+            var tokenResult = this.GenerateTokenResult(encodedToken, user, roles);
+
+            await this.LogAccess(user);
+
             return tokenResult;
+        }
+
+        private async Task LogAccess(User user)
+        {
+            this.context.AccessLogs.Add(new AccessLog
+            {
+                UserId = user.Id,
+                IpAddress = this.userSession.IpAddress
+            });
+
+            await this.context.SaveChangesAsync();
         }
 
         private string GenerateEncodedToken(User user, IEnumerable<string> roles)
@@ -78,7 +107,7 @@ namespace Template.Core.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private TokenDto GenerateTokeResult(string encodedToken, User user, IEnumerable<string> roles)
+        private TokenDto GenerateTokenResult(string encodedToken, User user, IEnumerable<string> roles)
         {
             var tokenResult = new TokenDto
             {

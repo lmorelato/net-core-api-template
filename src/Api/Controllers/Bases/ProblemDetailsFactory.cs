@@ -9,6 +9,27 @@ namespace Template.Api.Controllers.Bases
 {
     public static class ProblemDetailsFactory
     {
+        public static ProblemDetails New(HttpStatusCode httpStatusCode)
+        {
+            var problemDetails = new ProblemDetails();
+            SetValuesByDetail(problemDetails, httpStatusCode, null);
+            return problemDetails;
+        }
+
+        public static ProblemDetails New(HttpStatusCode httpStatusCode, string detail)
+        {
+            var problemDetails = new ProblemDetails();
+            SetValuesByDetail(problemDetails, httpStatusCode, detail);
+            return problemDetails;
+        }
+
+        public static ProblemDetails New(HttpStatusCode httpStatusCode, Exception exception)
+        {
+            var problemDetails = new ProblemDetails();
+            SetValuesByException(problemDetails, httpStatusCode, exception);
+            return problemDetails;
+        }
+
         public static ProblemDetails New(HttpStatusCode httpStatusCode, ModelStateDictionary modelState)
         {
             var hasError = modelState != null && !modelState.IsValid;
@@ -16,30 +37,54 @@ namespace Template.Api.Controllers.Bases
                                      new ValidationProblemDetails(modelState) :
                                      new ProblemDetails();
 
-            SetValues(problemDetails, httpStatusCode, GetProblemDetailDescription(modelState));
+            SetValuesByDetail(problemDetails, httpStatusCode, GetProblemDetailDescription(modelState));
             return problemDetails;
         }
 
-        public static ProblemDetails New(HttpStatusCode httpStatusCode, string detail)
+        public static ProblemDetails New(HttpStatusCode httpStatusCode, ModelStateDictionary modelState, Exception exception)
         {
-            var problemDetails = new ProblemDetails();
-            SetValues(problemDetails, httpStatusCode, detail);
+            var hasError = modelState != null && !modelState.IsValid;
+            var problemDetails = hasError ?
+                                     new ValidationProblemDetails(modelState) :
+                                     new ProblemDetails();
+
+            SetValuesByDetailAndException(problemDetails, httpStatusCode, GetProblemDetailDescription(modelState), exception);
             return problemDetails;
         }
-
-        public static ProblemDetails New(HttpStatusCode httpStatusCode)
+        
+        private static void SetValuesByDetail(ProblemDetails problemDetails, HttpStatusCode httpStatusCode, string detail)
         {
-            var problemDetails = new ProblemDetails();
-            SetValues(problemDetails, httpStatusCode, null);
-            return problemDetails;
+            SetCommonValues(problemDetails, httpStatusCode);
+            problemDetails.Detail = detail;
+            problemDetails.Instance = $"urn:api:{httpStatusCode.ToString().ToLower()}:{Guid.NewGuid()}";
         }
 
-        private static void SetValues(ProblemDetails problemDetails, HttpStatusCode httpStatusCode, string detail)
+        private static void SetValuesByException(ProblemDetails problemDetails, HttpStatusCode httpStatusCode, Exception exception)
+        {
+            SetCommonValues(problemDetails, httpStatusCode);
+            problemDetails.Detail = exception.Message;
+            problemDetails.Instance = string.Format(
+                "urn:api:{0}:{1}:{2}",
+                httpStatusCode.ToString().ToLower(),
+                exception.GetType().Name.ToLower(),
+                Guid.NewGuid());
+        }
+
+        private static void SetValuesByDetailAndException(ProblemDetails problemDetails, HttpStatusCode httpStatusCode, string detail, Exception exception)
+        {
+            SetCommonValues(problemDetails, httpStatusCode);
+            problemDetails.Detail = detail;
+            problemDetails.Instance = string.Format(
+                "urn:api:{0}:{1}:{2}",
+                httpStatusCode.ToString().ToLower(),
+                exception.GetType().Name.ToLower(),
+                Guid.NewGuid());
+        }
+
+        private static void SetCommonValues(ProblemDetails problemDetails, HttpStatusCode httpStatusCode)
         {
             problemDetails.Status = (int)httpStatusCode;
             problemDetails.Title = httpStatusCode.ToString().Titleize();
-            problemDetails.Instance = $"urn:api:{httpStatusCode.ToString().ToLower()}:{Guid.NewGuid()}";
-            problemDetails.Detail = detail;
         }
 
         private static string GetProblemDetailDescription(ModelStateDictionary modelState)

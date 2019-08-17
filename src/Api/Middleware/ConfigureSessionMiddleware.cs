@@ -8,6 +8,7 @@ using Template.Shared.Session;
 namespace Template.Api.Middleware
 {
     // see @ https://trailheadtechnology.com/aspnetcore-multi-tenant-tips-and-tricks/
+    // see @ https://www.jerriepelser.com/blog/aspnetcore-geo-location-from-ip-address/
     public class ConfigureSessionMiddleware
     {
         private readonly RequestDelegate next;
@@ -21,6 +22,8 @@ namespace Template.Api.Middleware
 
         public async Task InvokeAsync(HttpContext context, IUserSession currentUser)
         {
+            currentUser.IpAddress = context.Connection.RemoteIpAddress.ToString();
+
             if (context.User.Identities.Any(user => user.IsAuthenticated))
             {
                 currentUser.UserId = context.User.GetClaim<int>(Constants.ClaimTypes.Id);

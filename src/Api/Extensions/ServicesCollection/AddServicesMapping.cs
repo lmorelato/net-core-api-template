@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Template.Core.Services;
 using Template.Core.Services.Interfaces;
@@ -12,6 +13,8 @@ namespace Template.Api.Extensions.ServicesCollection
     {
         public static IServiceCollection AddServicesMapping(this IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddScoped<RoleManager<Role>>();
             services.AddScoped<UserManager<User>>();
 
