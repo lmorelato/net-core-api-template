@@ -12,7 +12,8 @@ namespace Template.Api.Extensions.ServicesCollection
             services.Configure<ApiBehaviorOptions>(
                 options =>
                 {
-                    options.InvalidModelStateResponseFactory = ctx => new ObjectResultBase(HttpStatusCode.BadRequest, ctx.ModelState);
+                    options.InvalidModelStateResponseFactory = 
+                        ctx => new ObjectResultBase(HttpStatusCode.BadRequest, ctx.ModelState);
                 });
 
             return services;
