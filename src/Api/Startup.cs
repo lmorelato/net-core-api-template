@@ -45,7 +45,7 @@ namespace Template.Api
                 application.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     ForwardedHeaders = ForwardedHeaders.XForwardedFor,
-                    ForwardLimit = 3
+                    ForwardLimit = 2
                 });
             }
 
@@ -54,10 +54,7 @@ namespace Template.Api
                 .UseSerilogRequestLogging()
                 .UseHsts()
                 .UseHttpsRedirection()
-                .UseCors(policy => policy
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader())
+                .UseCorsMiddleware()
                 .UseAuthentication()
                 .UseMiddleware<ConfigureSessionMiddleware>()
                 .UseLocalization()
