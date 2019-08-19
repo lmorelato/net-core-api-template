@@ -45,7 +45,7 @@ namespace Template.Api
                 application.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     ForwardedHeaders = ForwardedHeaders.XForwardedFor,
-                    ForwardLimit = 2
+                    ForwardLimit = 3
                 });
             }
 
