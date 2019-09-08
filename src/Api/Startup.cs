@@ -11,6 +11,7 @@ using Template.Api.Extensions.HostingEnvironment;
 using Template.Api.Extensions.ServicesCollection;
 using Template.Api.Middleware;
 using Template.Core.Profiles;
+using Template.Core.Settings;
 using Template.Data.Context;
 
 namespace Template.Api
@@ -27,6 +28,8 @@ namespace Template.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .Configure<MailjetApiSettings>(this.Configuration.GetSection(nameof(MailjetApiSettings)))
+                .Configure<FacebookAuthSettings>(this.Configuration.GetSection(nameof(FacebookAuthSettings)))
                 .AddDbContext(this.Configuration.GetConnectionString("DefaultConnection"))
                 .AddIdentity()
                 .AddAuthenticationToken(this.Configuration)

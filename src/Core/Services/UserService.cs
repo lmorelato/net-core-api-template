@@ -18,6 +18,7 @@ namespace Template.Core.Services
         private readonly AppDbContext context;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
+        private readonly IEmailService emailService;
         private readonly ISharedResources localizer;
         private readonly IMapper mapper;
 
@@ -25,12 +26,14 @@ namespace Template.Core.Services
             AppDbContext context,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
+            IEmailService emailService,
             ISharedResources localizer,
             IMapper mapper)
         {
             this.context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.emailService = emailService;
             this.localizer = localizer;
             this.mapper = mapper;
         }
@@ -43,6 +46,8 @@ namespace Template.Core.Services
 
         public async Task<UserDto> AddAsync(CredentialsDto credentials)
         {
+            await this.emailService.SendTemplate();
+
             var newUser = this.mapper.Map<User>(credentials);
             newUser.Culture = LocalizationHelper.GetClosestSupportedCultureName();
 

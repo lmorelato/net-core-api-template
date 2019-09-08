@@ -18,12 +18,13 @@ namespace Template.Api.Extensions.ServicesCollection
             services.AddScoped<RoleManager<Role>>();
             services.AddScoped<UserManager<User>>();
 
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserSession, UserSession>();
             services.AddScoped<ISharedResources, SharedResources>();
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
-
+            
             return services;
         }
     }
