@@ -244,6 +244,8 @@ namespace Template.Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
+                    b.Property<DateTime?>("LastAccessOn");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");

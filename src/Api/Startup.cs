@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -10,6 +11,7 @@ using Template.Api.Extensions.HostingEnvironment;
 using Template.Api.Extensions.ServicesCollection;
 using Template.Api.Middleware;
 using Template.Core.Profiles;
+using Template.Data.Context;
 
 namespace Template.Api
 {
@@ -38,8 +40,10 @@ namespace Template.Api
                 .ModifyApiBehaviour();
         }
 
-        public void Configure(IApplicationBuilder application, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder application, IHostingEnvironment env, AppDbContext appDbContext)
         {
+            appDbContext.Database.Migrate();
+            
             if (env.IsDevelopment())
             {
                 application.UseForwardedHeaders(new ForwardedHeadersOptions

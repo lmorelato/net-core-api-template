@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Template.Data.Migrations
 {
-    public partial class v0 : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -64,6 +64,7 @@ namespace Template.Data.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FullName = table.Column<string>(unicode: false, maxLength: 128, nullable: true),
                     Culture = table.Column<string>(unicode: false, maxLength: 10, nullable: false),
+                    LastAccessOn = table.Column<DateTime>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "GetUtcDate()"),
                     IsDeleted = table.Column<bool>(nullable: false),
                     ModifiedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "GetUtcDate()")
