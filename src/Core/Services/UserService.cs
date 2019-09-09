@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Template.Core.Exceptions;
 using Template.Core.Helpers;
 using Template.Core.Models;
@@ -123,14 +122,18 @@ namespace Template.Core.Services
                 try
                 {
                     var user = await this.FindByEmailAsync(userName);
+                    user.UpdatePasswordRequired = true;
+
                     var result = await this.userManager.RemovePasswordAsync(user);
                     this.ThrowIfNotSucceed(result);
 
-                    var password = UserHelper.GeneratePassword();
-                    result = await this.userManager.AddPasswordAsync(user, password);
+                    var newPassword = UserHelper.GeneratePassword();
+                    result = await this.userManager.AddPasswordAsync(user, newPassword);
                     this.ThrowIfNotSucceed(result);
 
-                    await this.SendPasswordResetEmailAsync(user.Email, password);
+                    await this.SendPasswordResetEmailAsync(user.Email, newPassword);
+
+                    await this.context.SaveChangesAsync();
                     transaction.Commit();
                 }
                 catch (Exception)
@@ -154,7 +157,7 @@ namespace Template.Core.Services
             settings.Subject = this.localizer.Get("ConfirmationEmailSubject");
             settings.ToEmail = user.Email;
             settings.ToName = null;
-            settings.TemplateId = Constants.Mailjet.Templates.ConfirmationEmail;
+            settings.TemplateId = this.localizer.Get("ConfirmationEmailBody");
             settings.Variables.Add(Constants.Mailjet.Keys.ConfirmationEmailLink, link);
 
             await this.mailjetService.Send(settings);
@@ -219,8 +222,7 @@ namespace Template.Core.Services
             settings.Subject = this.localizer.Get("PasswordResetEmailSubject");
             settings.ToEmail = email;
             settings.ToName = null;
-            settings.TemplateId = Constants.Mailjet.Templates.PasswordResetEmail;
-            settings.Variables.Add(Constants.Mailjet.Keys.NewPassword, password);
+            settings.Body = this.localizer.GetAndApplyValues("PasswordResetEmailBody", password);
 
             await this.mailjetService.Send(settings, true);
         }

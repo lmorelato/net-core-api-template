@@ -11,6 +11,8 @@ namespace Template.Data.Entities.Identity
 
         public string Culture { get; set; } = "en-US";
 
+        public bool UpdatePasswordRequired { get; set; } 
+
         public DateTime? LastAccessOn { get; set; } 
     }
 }

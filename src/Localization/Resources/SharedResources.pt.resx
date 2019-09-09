@@ -123,6 +123,9 @@
   <data name="BadRequestData" xml:space="preserve">
     <value>Dados de solicitação inválidos {0}.</value>
   </data>
+  <data name="ConfirmationEmailBody" xml:space="preserve">
+    <value>992383</value>
+  </data>
   <data name="ConfirmationEmailSubject" xml:space="preserve">
     <value>Ative a sua conta</value>
   </data>
@@ -152,6 +155,12 @@
   </data>
   <data name="NotFoundOnly" xml:space="preserve">
     <value>Não encontrado.</value>
+  </data>
+  <data name="PasswordResetEmailBody" xml:space="preserve">
+    <value>Olá!&lt;br /&gt;&lt;br /&gt; 
+Conforme solicitado, sua nova senha é &lt;b&gt;{0}&lt;/b&gt;. Você precisará alterar esta senha em seu próximo acesso.&lt;br /&gt;&lt;br /&gt; 
+Obrigado!&lt;br /&gt;&lt;br /&gt; 
+Equipe Template Api</value>
   </data>
   <data name="PasswordResetEmailSubject" xml:space="preserve">
     <value>Sua senha foi alterada</value>

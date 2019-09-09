@@ -10,7 +10,7 @@ using Template.Data.Context;
 namespace Template.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190908022046_Initial")]
+    [Migration("20190909172249_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -279,6 +279,8 @@ namespace Template.Data.Migrations
                         .IsUnicode(false);
 
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<bool>("UpdatePasswordRequired");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

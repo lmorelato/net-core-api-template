@@ -45,15 +45,10 @@
                 Subject = "Subject",
                 TemplateID = "TemplateID",
                 TemplateLanguage = "TemplateLanguage",
+                TextPart = "TextPart",
+                HTMLPart = "HTMLPart",
                 Variables = "Variables";
-
-            public static class Templates
-            {
-                public const int
-                    ConfirmationEmail = 961145,
-                    PasswordResetEmail = 000000;
-            }
-
+            
             public static class Keys
             {
                 public const string 

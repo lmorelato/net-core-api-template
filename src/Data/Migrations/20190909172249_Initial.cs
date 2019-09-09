@@ -64,6 +64,7 @@ namespace Template.Data.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FullName = table.Column<string>(unicode: false, maxLength: 128, nullable: true),
                     Culture = table.Column<string>(unicode: false, maxLength: 10, nullable: false),
+                    UpdatePasswordRequired = table.Column<bool>(nullable: false),
                     LastAccessOn = table.Column<DateTime>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false, defaultValueSql: "GetUtcDate()"),
                     IsDeleted = table.Column<bool>(nullable: false),

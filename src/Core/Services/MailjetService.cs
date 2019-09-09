@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Mailjet.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,12 +33,43 @@ namespace Template.Core.Services
 
         public async Task Send(EmailSettings settings, bool throwIfError = false)
         {
-            var body = this.CreateBody(settings.Subject, settings.ToEmail, settings.ToName);
-            if (settings.TemplateId.GetValueOrDefault() > 0)
+            var message = this.CreateMessage(settings);
+            if (settings.HasTemplate)
             {
-                body.Add(Constants.Mailjet.TemplateID, settings.TemplateId);
-                body.Add(Constants.Mailjet.TemplateLanguage, true);
+                this.FormatTemplate(settings, message);
             }
+            else
+            {
+                this.FormatBody(settings, message);
+            }
+
+            var response = await this.SendMessage(message);
+            if (!response.IsSuccessStatusCode)
+            {
+                this.HandleException(settings, throwIfError, response);
+            }
+        }
+
+        private async Task<MailjetResponse> SendMessage(JObject message)
+        {
+            var request = new MailjetRequest { Resource = Mailjet.Client.Resources.Send.Resource };
+            request.Property(Mailjet.Client.Resources.Send.Messages, new JArray { message });
+
+            var client = this.CreateMailjetClient();
+            var response = await client.PostAsync(request);
+            return response;
+        }
+
+        private void FormatBody(EmailSettings settings, JObject message)
+        {
+            message.Add(Constants.Mailjet.HTMLPart, settings.Body);
+            message.Add(Constants.Mailjet.TextPart, Regex.Replace(settings.Body, "<.*?>", string.Empty));
+        }
+
+        private void FormatTemplate(EmailSettings settings, JObject message)
+        {
+            message.Add(Constants.Mailjet.TemplateID, Convert.ToInt64(settings.TemplateId));
+            message.Add(Constants.Mailjet.TemplateLanguage, true);
 
             var variables = new JObject();
             foreach (var (key, value) in settings.Variables)
@@ -44,28 +77,22 @@ namespace Template.Core.Services
                 variables.Add(key, value);
             }
 
-            body.Add(Constants.Mailjet.Variables, variables);
+            message.Add(Constants.Mailjet.Variables, variables);
+        }
 
-            var request = new MailjetRequest { Resource = Mailjet.Client.Resources.Send.Resource };
-            request.Property(Mailjet.Client.Resources.Send.Messages, new JArray { body });
+        private void HandleException(EmailSettings settings, bool throwIfError, MailjetResponse response)
+        {
+            var errorText = this.localizer.GetAndApplyValues("MailjetError", settings.Subject, settings.ToEmail);
+            var emailSenderException = new MailjetException(errorText);
+            this.logger.LogError(emailSenderException, response.GetData().ToString());
 
-            var client = this.CreateMailjetClient();
-            var response = await client.PostAsync(request);
-
-            if (!response.IsSuccessStatusCode)
+            if (throwIfError)
             {
-                var message = this.localizer.GetAndApplyValues("MailjetError", settings.Subject, settings.ToEmail);
-                var emailSenderException = new MailjetException(message);
-                this.logger.LogError(emailSenderException, response.GetData().ToString());
-
-                if (throwIfError)
-                {
-                    throw emailSenderException;
-                }
+                throw emailSenderException;
             }
         }
 
-        private JObject CreateBody(string subject, string toEmail, string toName)
+        private JObject CreateMessage(EmailSettings settings)
         {
             var from = new JObject
             {
@@ -77,8 +104,8 @@ namespace Template.Core.Services
             {
                 new JObject
                 {
-                    { Constants.Mailjet.Email, toEmail },
-                    { Constants.Mailjet.Name, toName }
+                    { Constants.Mailjet.Email, settings.ToEmail },
+                    { Constants.Mailjet.Name, settings.ToName }
                 }
             };
 
@@ -86,7 +113,7 @@ namespace Template.Core.Services
             {
                 { Constants.Mailjet.From, from },
                 { Constants.Mailjet.To, to },
-                { Constants.Mailjet.Subject, subject }
+                { Constants.Mailjet.Subject, settings.Subject }
             };
 
             return message;

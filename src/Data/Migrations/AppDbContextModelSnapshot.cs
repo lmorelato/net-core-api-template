@@ -278,6 +278,8 @@ namespace Template.Data.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
+                    b.Property<bool>("UpdatePasswordRequired");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .IsUnicode(false);

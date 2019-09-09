@@ -123,6 +123,9 @@
   <data name="BadRequestData" xml:space="preserve">
     <value>Bad request data '{0}'.</value>
   </data>
+  <data name="ConfirmationEmailBody" xml:space="preserve">
+    <value>961145</value>
+  </data>
   <data name="ConfirmationEmailSubject" xml:space="preserve">
     <value>Activate your account</value>
   </data>
@@ -152,6 +155,12 @@
   </data>
   <data name="NotFoundOnly" xml:space="preserve">
     <value>Not found.</value>
+  </data>
+  <data name="PasswordResetEmailBody" xml:space="preserve">
+    <value>Hi there!&lt;br /&gt;&lt;br /&gt; 
+As you requested, your new temporary password is &lt;b&gt;{0}&lt;/b&gt;. You will be asked to change it in your next access.&lt;br /&gt;&lt;br /&gt; 
+Thank you!&lt;br /&gt;&lt;br /&gt; 
+The Template Api Crew</value>
   </data>
   <data name="PasswordResetEmailSubject" xml:space="preserve">
     <value>New account password</value>

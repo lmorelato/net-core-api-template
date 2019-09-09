@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Template.Core.Exceptions
+﻿namespace Template.Core.Exceptions
 {
     public class MailjetException : BaseException
     {
