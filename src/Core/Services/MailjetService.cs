@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Mailjet.Client;
-using Mailjet.Client.Resources;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using Serilog;
 
 using Template.Core.Exceptions;
 using Template.Core.Models;
