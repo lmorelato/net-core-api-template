@@ -18,7 +18,7 @@ namespace Template.Api.Extensions.ServicesCollection
             services.AddScoped<RoleManager<Role>>();
             services.AddScoped<UserManager<User>>();
 
-            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMailjetService, MailjetService>();
             services.AddScoped<IUserSession, UserSession>();
             services.AddScoped<ISharedResources, SharedResources>();
 

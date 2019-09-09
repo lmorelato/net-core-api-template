@@ -1,9 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Template.Api.Controllers.Bases;
 using Template.Core.Models.Dtos;
 using Template.Core.Services.Interfaces;
+using Template.Localization;
+using Template.Shared;
 using Template.Shared.Session;
 
 namespace Template.Api.Controllers
@@ -11,10 +15,15 @@ namespace Template.Api.Controllers
     public class UsersController : AuthControllerBase
     {
         private readonly IUserService userService;
+        private readonly ISharedResources localizer;
 
-        public UsersController(IUserService userService, IUserSession currentUser) : base(currentUser)
+        public UsersController(
+            IUserService userService,
+            IUserSession currentUser,
+            ISharedResources localizer) : base(currentUser)
         {
             this.userService = userService;
+            this.localizer = localizer;
         }
 
         /// <summary>
@@ -100,7 +109,7 @@ namespace Template.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PatchCultureAsync([FromRoute] int id)
+        public async Task<IActionResult> UpdateCultureAsync([FromRoute] int id)
         {
             if (id <= 0)
             {
@@ -108,6 +117,19 @@ namespace Template.Api.Controllers
             }
 
             await this.userService.UpdateCultureAsync(id);
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="passwordDto"></param>
+        /// <returns></returns>
+        [HttpPatch("{id:int}/password")]
+        public async Task<IActionResult> UpdatePasswordAsync(int id, [FromBody] PasswordDto passwordDto)
+        {
+            await this.userService.UpdatePasswordAsync(id, passwordDto);
             return this.NoContent();
         }
 
@@ -133,7 +155,51 @@ namespace Template.Api.Controllers
             await this.userService.RemoveAsync(id);
             return this.NoContent();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("{userName}/send-confirmation-email")]
+        public async Task<IActionResult> SendConfirmationEmailAsync([FromRoute]string userName)
+        {
+            await this.userService.SendConfirmationEmailAsync(userName);
+            return this.NoContent();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("{id:int}/" + Constants.Api.Actions.ConfirmEmail, Name = Constants.Api.Actions.ConfirmEmail)]
+        public async Task<ContentResult> ConfirmEmailAsync([FromRoute]int id, string token)
+        {
+            await this.userService.ConfirmEmailAsync(id, token);
+
+            return new ContentResult
+            {
+                ContentType = "text/html",
+                StatusCode = (int)HttpStatusCode.OK,
+                Content = "<html><body><div>" + this.localizer.Get("EmailConfirmed") + "</div></body></html>"
+            };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("{userName}/password-reset")]
+        public async Task<IActionResult> ResetPasswordAsync([FromRoute]string userName)
+        {
+            await this.userService.ResetPasswordAsync(userName);
+            return this.NoContent();
+        }
     }
 }
-
-

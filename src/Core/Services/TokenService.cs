@@ -54,7 +54,7 @@ namespace Template.Core.Services
 
             if (!user.EmailConfirmed)
             {
-                // throw new EmailNotConfirmedException(this.localizer.Get("EmailNotConfirmed"));
+                throw new EmailNotConfirmedException(this.localizer.Get("EmailNotConfirmed"));
             }
 
             var passwordIsValid = await this.userManager.CheckPasswordAsync(user, credentials.Password);

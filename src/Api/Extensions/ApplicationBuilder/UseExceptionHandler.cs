@@ -104,12 +104,13 @@ namespace Template.Api.Extensions.ApplicationBuilder
             BadHttpRequestException exception,
             bool isTrusted)
         {
-            var statusCode = (int)typeof(BadHttpRequestException).GetProperty(
+            var propertyInfo = typeof(BadHttpRequestException).GetProperty(
                 "StatusCode",
-                BindingFlags.NonPublic | BindingFlags.Instance).GetValue(exception);
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            var statusCode = (int?)propertyInfo?.GetValue(exception);
 
             var problemDetails = ProblemDetailsFactory.New(
-                (HttpStatusCode)statusCode,
+                statusCode == null ? HttpStatusCode.InternalServerError : (HttpStatusCode)statusCode,
                 isTrusted ? exception.Demystify().ToString() : exception.Message);
 
             return problemDetails;
@@ -117,4 +118,3 @@ namespace Template.Api.Extensions.ApplicationBuilder
     }
 }
 #pragma warning restore 1998
-

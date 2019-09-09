@@ -61,8 +61,8 @@ namespace Template.Data.Extensions.ModelBuilder
                         .Property(p => p.ClaimType)
                         .HasMaxLength(Constants.Database.IdentityVarcharMaxLength);
                     entity
-                        .Property(p => p.ClaimValue).
-                        HasMaxLength(Constants.Database.IdentityVarcharMaxLength);
+                        .Property(p => p.ClaimValue)
+                        .HasMaxLength(Constants.Database.IdentityVarcharMaxLength);
                 });
 
             modelBuilder.Entity<IdentityUserRole<int>>(

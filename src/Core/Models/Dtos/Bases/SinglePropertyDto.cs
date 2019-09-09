@@ -1,5 +1,4 @@
-﻿
-namespace Template.Core.Models.Dtos.Bases
+﻿namespace Template.Core.Models.Dtos.Bases
 {
     public class SinglePropertyDto<TField> : BaseDto
     {

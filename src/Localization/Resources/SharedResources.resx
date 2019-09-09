@@ -123,6 +123,9 @@
   <data name="BadRequestData" xml:space="preserve">
     <value>Bad request data '{0}'.</value>
   </data>
+  <data name="ConfirmationEmailSubject" xml:space="preserve">
+    <value>Activate your account</value>
+  </data>
   <data name="DateRangeNotValid" xml:space="preserve">
     <value>Invalid data range.</value>
   </data>
@@ -141,14 +144,17 @@
   <data name="LoginFailure" xml:space="preserve">
     <value>Invalid username or password.</value>
   </data>
+  <data name="MailjetError" xml:space="preserve">
+    <value>Error sending email '{0}' to '{1}'.</value>
+  </data>
   <data name="NotFound" xml:space="preserve">
     <value>{0} not found.</value>
   </data>
   <data name="NotFoundOnly" xml:space="preserve">
     <value>Not found.</value>
   </data>
-  <data name="SendgridFailure" xml:space="preserve">
-    <value>Failure sending email to '{0}', the server response is '{1}'.</value>
+  <data name="PasswordResetEmailSubject" xml:space="preserve">
+    <value>New account password</value>
   </data>
   <data name="UnauthorizedUserAccess" xml:space="preserve">
     <value>Invalid credentials to access the requested resources.</value>

@@ -1,16 +1,11 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using Template.Core.Models.Dtos.Bases;
-using Template.Localization.Resources;
+﻿using Template.Core.Models.Dtos.Bases;
 
 namespace Template.Core.Models.Dtos
 {
-    public sealed class CredentialsDto : BaseDto
+    public sealed class PasswordDto : BaseDto
     {
-        [Display(ResourceType = typeof(DisplayResources), Name = "Username")]
-        public string UserName { get; set; }
-
-        [Display(ResourceType = typeof(DisplayResources), Name = "Password")]
         public string Password { get; set; }
+
+        public string NewPassword { get; set; }
     }
 }

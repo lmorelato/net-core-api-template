@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AspNetCore.IServiceCollection.AddIUrlHelper;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -35,6 +36,7 @@ namespace Template.Api
                 .AddAuthenticationToken(this.Configuration)
                 .AddAuthorization()
                 .AddServicesMapping()
+                .AddUrlHelper()
                 .AddAutoMapper(typeof(AutoMapperProfile))
                 .AddMemoryCache()
                 .AddSwagger()
