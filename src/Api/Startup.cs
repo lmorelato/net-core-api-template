@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using AspNetCore.IServiceCollection.AddIUrlHelper;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -10,6 +12,8 @@ using Template.Api.Extensions.HostingEnvironment;
 using Template.Api.Extensions.ServicesCollection;
 using Template.Api.Middleware;
 using Template.Core.Profiles;
+using Template.Core.Settings;
+using Template.Data.Context;
 
 namespace Template.Api
 {
@@ -25,11 +29,14 @@ namespace Template.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .Configure<MailjetApiSettings>(this.Configuration.GetSection(nameof(MailjetApiSettings)))
+                .Configure<FacebookAuthSettings>(this.Configuration.GetSection(nameof(FacebookAuthSettings)))
                 .AddDbContext(this.Configuration.GetConnectionString("DefaultConnection"))
                 .AddIdentity()
                 .AddAuthenticationToken(this.Configuration)
                 .AddAuthorization()
                 .AddServicesMapping()
+                .AddUrlHelper()
                 .AddAutoMapper(typeof(AutoMapperProfile))
                 .AddMemoryCache()
                 .AddSwagger()
@@ -38,14 +45,16 @@ namespace Template.Api
                 .ModifyApiBehaviour();
         }
 
-        public void Configure(IApplicationBuilder application, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder application, IHostingEnvironment env, AppDbContext appDbContext)
         {
+            appDbContext.Database.Migrate();
+            
             if (env.IsDevelopment())
             {
                 application.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     ForwardedHeaders = ForwardedHeaders.XForwardedFor,
-                    ForwardLimit = 3
+                    ForwardLimit = 2
                 });
             }
 
@@ -54,10 +63,7 @@ namespace Template.Api
                 .UseSerilogRequestLogging()
                 .UseHsts()
                 .UseHttpsRedirection()
-                .UseCors(policy => policy
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader())
+                .UseCorsMiddleware()
                 .UseAuthentication()
                 .UseMiddleware<ConfigureSessionMiddleware>()
                 .UseLocalization()

@@ -54,7 +54,7 @@ namespace Template.Core.Services
 
             if (!user.EmailConfirmed)
             {
-                // throw new EmailNotConfirmedException(this.localizer.Get("EmailNotConfirmed"));
+                throw new EmailNotConfirmedException(this.localizer.Get("EmailNotConfirmed"));
             }
 
             var passwordIsValid = await this.userManager.CheckPasswordAsync(user, credentials.Password);
@@ -74,12 +74,10 @@ namespace Template.Core.Services
 
         private async Task LogAccess(User user)
         {
-            this.context.AccessLogs.Add(new AccessLog
-            {
-                UserId = user.Id,
-                IpAddress = this.userSession.IpAddress
-            });
+            var log = new AccessLog { UserId = user.Id, IpAddress = this.userSession.IpAddress };
+            this.context.AccessLogs.Add(log);
 
+            user.LastAccessOn = log.Date;
             await this.context.SaveChangesAsync();
         }
 

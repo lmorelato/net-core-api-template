@@ -14,6 +14,11 @@ namespace Template.Core.Exceptions
         {
         }
 
+        protected BaseException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
         protected BaseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

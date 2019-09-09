@@ -8,7 +8,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <UserSecretsId>0d80d45b-c823-4a1d-9db0-cf03634cd31e</UserSecretsId>
+    <UserSecretsId>b54a5ca9-0854-4394-a42e-0b74a0dfe62b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿
-using Template.Core.Models.Dtos.Bases;
+﻿using Template.Core.Models.Dtos.Bases;
 
 namespace Template.Core.Models.Dtos
 {

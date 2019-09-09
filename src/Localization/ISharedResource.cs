@@ -6,6 +6,6 @@
         
         string GetAndApplyKeys(string key, params string[] keys);
 
-        string GetAndApplyValues(string key, params object[] parameters);
+        string GetAndApplyValues(string key, params object[] values);
     }
 }

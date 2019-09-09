@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+
+using Microsoft.AspNetCore.Identity;
 using Template.Data.Entities.Interfaces;
 
 namespace Template.Data.Entities.Identity
@@ -8,5 +10,7 @@ namespace Template.Data.Entities.Identity
         public string FullName { get; set; }
 
         public string Culture { get; set; } = "en-US";
+
+        public DateTime? LastAccessOn { get; set; } 
     }
 }

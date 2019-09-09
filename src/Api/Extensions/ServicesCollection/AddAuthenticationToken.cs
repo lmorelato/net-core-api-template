@@ -21,19 +21,19 @@ namespace Template.Api.Extensions.ServicesCollection
 
         private static SymmetricSecurityKey SetTokenSettings(
             IServiceCollection services,
-            IConfiguration tokenOptions)
+            IConfiguration configuration)
         {
             // https://www.grc.com/passwords.htm
-            var apiSecretKey = tokenOptions["SigningKey"];
+            var apiSecretKey = configuration["SigningKey"];
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(apiSecretKey));
 
             services.Configure<TokenSettings>(
                 options =>
                 {
-                    options.Issuer = tokenOptions[nameof(TokenSettings.Issuer)];
-                    options.Audience = tokenOptions[nameof(TokenSettings.Audience)];
+                    options.Issuer = configuration[nameof(TokenSettings.Issuer)];
+                    options.Audience = configuration[nameof(TokenSettings.Audience)];
                     options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-                    options.LifetimeInMinutes = Convert.ToInt32(tokenOptions[nameof(TokenSettings.LifetimeInMinutes)]);
+                    options.LifetimeInMinutes = Convert.ToInt32(configuration[nameof(TokenSettings.LifetimeInMinutes)]);
                 });
 
             return signingKey;

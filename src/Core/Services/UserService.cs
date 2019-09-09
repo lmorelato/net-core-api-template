@@ -1,9 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Template.Core.Exceptions;
 using Template.Core.Helpers;
+using Template.Core.Models;
 using Template.Core.Models.Dtos;
 using Template.Core.Services.Interfaces;
 using Template.Data.Context;
@@ -18,6 +22,8 @@ namespace Template.Core.Services
         private readonly AppDbContext context;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
+        private readonly IMailjetService mailjetService;
+        private readonly IUrlHelper urlHelper;
         private readonly ISharedResources localizer;
         private readonly IMapper mapper;
 
@@ -25,19 +31,23 @@ namespace Template.Core.Services
             AppDbContext context,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
+            IMailjetService mailjetService,
+            IUrlHelper urlHelper,
             ISharedResources localizer,
             IMapper mapper)
         {
             this.context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.mailjetService = mailjetService;
+            this.urlHelper = urlHelper;
             this.localizer = localizer;
             this.mapper = mapper;
         }
 
-        public async Task<UserDto> GetAsync(int id)
+        public async Task<UserDto> GetAsync(int userId)
         {
-            var user = await this.FindAsync(id);
+            var user = await this.FindAsync(userId);
             return this.mapper.Map<UserDto>(user);
         }
 
@@ -55,12 +65,14 @@ namespace Template.Core.Services
                     await this.AddToRoleAsync(newUser, Constants.Roles.User);
                     transaction.Commit();
                 }
-                catch (IdentityResultException)
+                catch (Exception)
                 {
                     transaction.Rollback();
                     throw;
                 }
             }
+
+            await this.SendConfirmationEmailAsync(newUser.UserName);
 
             return this.mapper.Map<UserDto>(newUser);
         }
@@ -92,9 +104,84 @@ namespace Template.Core.Services
             await this.context.SaveChangesAsync();
         }
 
-        private async Task<User> FindAsync(int id)
+        public async Task UpdatePasswordAsync(int userId, PasswordDto passwordDto)
         {
-            var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (passwordDto.Password.Equals(passwordDto.NewPassword))
+            {
+                throw new InvalidPasswordException(this.localizer.Get("InvalidNewPassword"));
+            }
+
+            var user = await this.FindAsync(userId);
+            var result = await this.userManager.ChangePasswordAsync(user, passwordDto.Password, passwordDto.NewPassword);
+            this.ThrowIfNotSucceed(result);
+        }
+
+        public async Task ResetPasswordAsync(string userName)
+        {
+            using (var transaction = await this.context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var user = await this.FindByEmailAsync(userName);
+                    var result = await this.userManager.RemovePasswordAsync(user);
+                    this.ThrowIfNotSucceed(result);
+
+                    var password = UserHelper.GeneratePassword();
+                    result = await this.userManager.AddPasswordAsync(user, password);
+                    this.ThrowIfNotSucceed(result);
+
+                    await this.SendPasswordResetEmailAsync(user.Email, password);
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public async Task SendConfirmationEmailAsync(string userName)
+        {
+            var user = await this.FindByEmailAsync(userName);
+            var token = await this.userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var link = $"{this.urlHelper.Link(Constants.Api.Actions.ConfirmEmail, new { user.Id, token })}&" +
+                       $"culture={CultureInfo.CurrentCulture}&" +
+                       $"ui-culture={CultureInfo.CurrentUICulture}";
+
+            var settings = new EmailSettings();
+            settings.Subject = this.localizer.Get("ConfirmationEmailSubject");
+            settings.ToEmail = user.Email;
+            settings.ToName = null;
+            settings.TemplateId = Constants.Mailjet.Templates.ConfirmationEmail;
+            settings.Variables.Add(Constants.Mailjet.Keys.ConfirmationEmailLink, link);
+
+            await this.mailjetService.Send(settings);
+        }
+
+        public async Task ConfirmEmailAsync(int userId, string token)
+        {
+            var user = await this.FindAsync(userId);
+            var result = await this.userManager.ConfirmEmailAsync(user, token);
+            this.ThrowIfNotSucceed(result);
+        }
+
+        private async Task<User> FindAsync(int userId)
+        {
+            var user = await this.userManager.FindByIdAsync(userId.ToString());
+            if (user != null)
+            {
+                return user;
+            }
+
+            var message = this.localizer.GetAndApplyKeys("NotFound", "User");
+            throw new NotFoundException(message);
+        }
+
+        private async Task<User> FindByEmailAsync(string email)
+        {
+            var user = await this.userManager.FindByEmailAsync(email);
             if (user != null)
             {
                 return user;
@@ -124,6 +211,18 @@ namespace Template.Core.Services
             {
                 throw new IdentityResultException(result);
             }
+        }
+
+        private async Task SendPasswordResetEmailAsync(string email, string password)
+        {
+            var settings = new EmailSettings();
+            settings.Subject = this.localizer.Get("PasswordResetEmailSubject");
+            settings.ToEmail = email;
+            settings.ToName = null;
+            settings.TemplateId = Constants.Mailjet.Templates.PasswordResetEmail;
+            settings.Variables.Add(Constants.Mailjet.Keys.NewPassword, password);
+
+            await this.mailjetService.Send(settings, true);
         }
     }
 }

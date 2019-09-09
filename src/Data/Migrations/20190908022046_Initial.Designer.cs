@@ -10,8 +10,8 @@ using Template.Data.Context;
 namespace Template.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190817223430_v0")]
-    partial class v0
+    [Migration("20190908022046_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -245,6 +245,8 @@ namespace Template.Data.Migrations
                         .IsUnicode(false);
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastAccessOn");
 
                     b.Property<bool>("LockoutEnabled");
 
