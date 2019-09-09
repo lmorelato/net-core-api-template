@@ -18,46 +18,47 @@ namespace Template.Core.Helpers
 
         // https://github.com/Darkseal/PasswordGenerator/blob/master/PasswordGenerator.cs
         public static string GeneratePassword(
-            int requiredLength = 6, 
-            int requiredUniqueChars = 4, 
+            int requiredLength = 6,
+            int requiredUniqueChars = 4,
             bool requireDigit = true,
-            bool requireUppercase = true,
-            bool requireLowercase = false, 
+            bool requireUppercase = false,
+            bool requireLowercase = true,
             bool requireNonAlphanumeric = false)
         {
-            var randomChars = new[]
-            {
-                    "ABCDEFGHJKLMNOPQRSTUVWXYZ", // uppercase 
-                    "abcdefghijkmnopqrstuvwxyz", // lowercase
-                    "0123456789", // digits
-                    "!@#$%&+=?" // non-alphanumeric
-            };
-
+            var randomChars = new List<string>();
             var chars = new List<char>();
+            var upperCase = "ABCDEGHJKLMNOPQRSTUVWXYZ";
+            var lowerCase = "abcdefghijkmnopqrstuvwxyz";
+            var digit = "0123456789";
+            var nonAlphanumeric = "!@#$%&+=?";
 
             if (requireUppercase)
             {
-                chars.Insert(Rand.Next(0, chars.Count), randomChars[0][Rand.Next(0, randomChars[0].Length)]);
+                randomChars.Add(upperCase);
+                chars.Insert(Rand.Next(0, chars.Count), upperCase[Rand.Next(0, upperCase.Length)]);
             }
 
             if (requireLowercase)
             {
-                chars.Insert(Rand.Next(0, chars.Count), randomChars[1][Rand.Next(0, randomChars[1].Length)]);
+                randomChars.Add(lowerCase);
+                chars.Insert(Rand.Next(0, chars.Count), lowerCase[Rand.Next(0, lowerCase.Length)]);
             }
 
             if (requireDigit)
             {
-                chars.Insert(Rand.Next(0, chars.Count), randomChars[2][Rand.Next(0, randomChars[2].Length)]);
+                randomChars.Add(digit);
+                chars.Insert(Rand.Next(0, chars.Count), digit[Rand.Next(0, digit.Length)]);
             }
 
             if (requireNonAlphanumeric)
             {
-                chars.Insert(Rand.Next(0, chars.Count), randomChars[3][Rand.Next(0, randomChars[3].Length)]);
+                randomChars.Add(nonAlphanumeric);
+                chars.Insert(Rand.Next(0, chars.Count), nonAlphanumeric[Rand.Next(0, nonAlphanumeric.Length)]);
             }
 
             for (var i = chars.Count; i < requiredLength || chars.Distinct().Count() < requiredUniqueChars; i++)
             {
-                var rcs = randomChars[Rand.Next(0, randomChars.Length)];
+                var rcs = randomChars[Rand.Next(0, randomChars.Count)];
                 chars.Insert(Rand.Next(0, chars.Count), rcs[Rand.Next(0, rcs.Length)]);
             }
 
