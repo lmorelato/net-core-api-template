@@ -51,7 +51,7 @@ namespace Template.Api.Controllers.Bases
             SetValuesByDetailAndException(problemDetails, httpStatusCode, GetProblemDetailDescription(modelState), exception);
             return problemDetails;
         }
-        
+
         private static void SetValuesByDetail(ProblemDetails problemDetails, HttpStatusCode httpStatusCode, string detail)
         {
             SetCommonValues(problemDetails, httpStatusCode);
@@ -63,8 +63,8 @@ namespace Template.Api.Controllers.Bases
         {
             SetCommonValues(problemDetails, httpStatusCode);
             problemDetails.Detail = exception.Message;
-            problemDetails.Instance = string.Format(
-                "urn:api:{0}:{1}:{2}",
+
+            problemDetails.Instance = "urn:api:{0}:{1}:{2}".FormatWith(
                 httpStatusCode.ToString().ToLower(),
                 exception.GetType().Name.ToLower(),
                 Guid.NewGuid());
@@ -74,8 +74,7 @@ namespace Template.Api.Controllers.Bases
         {
             SetCommonValues(problemDetails, httpStatusCode);
             problemDetails.Detail = detail;
-            problemDetails.Instance = string.Format(
-                "urn:api:{0}:{1}:{2}",
+            problemDetails.Instance = "urn:api:{0}:{1}:{2}".FormatWith(
                 httpStatusCode.ToString().ToLower(),
                 exception.GetType().Name.ToLower(),
                 Guid.NewGuid());

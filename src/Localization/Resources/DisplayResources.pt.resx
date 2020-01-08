@@ -249,4 +249,13 @@
   <data name="Value" xml:space="preserve">
     <value>Valor</value>
   </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Lat" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="Long" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
 </root>

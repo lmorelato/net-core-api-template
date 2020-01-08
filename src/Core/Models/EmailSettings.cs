@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NToolbox.Extensions.Strings;
 
 namespace Template.Core.Models
 {
@@ -19,8 +20,8 @@ namespace Template.Core.Models
 
         public string TemplateId { get; set; }
 
-        public Dictionary<string, string> Variables { get; set; }
+        public Dictionary<string, string> Variables { get; }
 
-        public bool HasTemplate => !string.IsNullOrWhiteSpace(this.TemplateId);
+        public bool HasTemplate => this.TemplateId.IsNotNullOrWhiteSpace();
     }
 }

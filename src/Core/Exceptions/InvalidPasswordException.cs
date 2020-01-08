@@ -1,10 +1,18 @@
-﻿using Template.Core.Exceptions.Interfaces;
+﻿using System;
+using System.Runtime.Serialization;
+using Template.Core.Exceptions.Interfaces;
 
 namespace Template.Core.Exceptions
 {
-    public class InvalidPasswordException : BaseException, IKnownException
+    [Serializable]
+    public sealed class InvalidPasswordException : BaseException, IKnownException
     {
         public InvalidPasswordException(string message) : base(message)
+        {
+        }
+
+        private InvalidPasswordException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

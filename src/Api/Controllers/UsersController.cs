@@ -37,7 +37,7 @@ namespace Template.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<UserDto>> GetAsync([FromRoute]int id)
+        public async Task<ActionResult<UserDto>> GetAsync([FromRoute] int id)
         {
             if (id <= 0)
             {
@@ -59,7 +59,7 @@ namespace Template.Api.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<UserDto>> PostAsync([FromBody]CredentialsDto credentials)
+        public async Task<ActionResult<UserDto>> PostAsync([FromBody] CredentialsDto credentials)
         {
             var result = await this.userService.AddAsync(credentials);
             return this.CreatedAtAction(nameof(this.GetAsync), new { id = result.Id }, result);
@@ -162,7 +162,7 @@ namespace Template.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("{userName}/send-confirmation-email")]
-        public async Task<IActionResult> SendConfirmationEmailAsync([FromRoute]string userName)
+        public async Task<IActionResult> SendConfirmationEmailAsync([FromRoute] string userName)
         {
             await this.userService.SendConfirmationEmailAsync(userName);
             return this.NoContent();
@@ -176,7 +176,7 @@ namespace Template.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id:int}/" + Constants.Api.Actions.ConfirmEmail, Name = Constants.Api.Actions.ConfirmEmail)]
-        public async Task<ContentResult> ConfirmEmailAsync([FromRoute]int id, string token)
+        public async Task<ContentResult> ConfirmEmailAsync([FromRoute] int id, string token)
         {
             await this.userService.ConfirmEmailAsync(id, token);
 
@@ -195,7 +195,7 @@ namespace Template.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("{userName}/password-reset")]
-        public async Task<IActionResult> ResetPasswordAsync([FromRoute]string userName)
+        public async Task<IActionResult> ResetPasswordAsync([FromRoute] string userName)
         {
             await this.userService.ResetPasswordAsync(userName);
             return this.NoContent();

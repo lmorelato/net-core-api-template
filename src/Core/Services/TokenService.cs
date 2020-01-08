@@ -4,8 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Options;
+using NToolbox.Extensions.Enumerables;
 using Template.Core.Exceptions;
 using Template.Core.Models.Dtos;
 using Template.Core.Services.Interfaces;
@@ -88,7 +88,7 @@ namespace Template.Core.Services
             var claims = new[]
              {
                  new Claim(Constants.ClaimTypes.Id, user.Id.ToString(), ClaimValueTypes.Integer32),
-                 new Claim(Constants.ClaimTypes.Role, roles.Join()),
+                 new Claim(Constants.ClaimTypes.Role, roles.JoinByComma()),
                  new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                  new Claim(JwtRegisteredClaimNames.Jti, this.tokenSettings.JtiGenerator),
                  new Claim(JwtRegisteredClaimNames.Iat, issuedAt.ToString(), ClaimValueTypes.Integer64)
@@ -115,7 +115,7 @@ namespace Template.Core.Services
                 Id = user.Id,
                 Name = user.FullName,
                 UserName = user.UserName,
-                Role = roles.Join()
+                Role = roles.JoinByComma()
             };
 
             return tokenResult;

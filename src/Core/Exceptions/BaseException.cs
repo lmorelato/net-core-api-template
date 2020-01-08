@@ -10,7 +10,8 @@ namespace Template.Core.Exceptions
         {
         }
 
-        protected BaseException(string message) : base(message)
+        protected BaseException(string message)
+            : base(message)
         {
         }
 

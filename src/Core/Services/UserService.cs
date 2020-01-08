@@ -102,7 +102,7 @@ namespace Template.Core.Services
             this.context.EnsureAudit();
             await this.context.SaveChangesAsync();
         }
-
+        
         public async Task UpdatePasswordAsync(int userId, PasswordDto passwordDto)
         {
             if (passwordDto.Password.Equals(passwordDto.NewPassword))
@@ -208,14 +208,6 @@ namespace Template.Core.Services
             this.ThrowIfNotSucceed(result);
         }
 
-        private void ThrowIfNotSucceed(IdentityResult result)
-        {
-            if (!result.Succeeded)
-            {
-                throw new IdentityResultException(result);
-            }
-        }
-
         private async Task SendPasswordResetEmailAsync(string email, string password)
         {
             var settings = new EmailSettings();
@@ -225,6 +217,14 @@ namespace Template.Core.Services
             settings.Body = this.localizer.GetAndApplyValues("PasswordResetEmailBody", password);
 
             await this.mailjetService.Send(settings, true);
+        }
+
+        private void ThrowIfNotSucceed(IdentityResult result)
+        {
+            if (!result.Succeeded)
+            {
+                throw new IdentityResultException(result);
+            }
         }
     }
 }

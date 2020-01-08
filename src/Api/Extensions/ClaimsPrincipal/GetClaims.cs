@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NToolbox.Extensions.Strings;
+
 namespace Template.Api.Extensions.ClaimsPrincipal
 {
     public static partial class ClaimsPrincipalExtensions
@@ -9,7 +11,7 @@ namespace Template.Api.Extensions.ClaimsPrincipal
         public static List<T> GetClaims<T>(this System.Security.Claims.ClaimsPrincipal claimsPrincipal, string type)
         {
             var claims = claimsPrincipal.Claims
-                .Where(c => c.Type == type && !string.IsNullOrEmpty(c.Value))
+                .Where(c => c.Type == type && c.Value.IsNotNullOrEmpty())
                 .ToList();
 
             return claims.Any() ?

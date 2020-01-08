@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Humanizer;
+using NToolbox.Extensions.Strings;
 
 namespace Template.Core.Helpers
 {
@@ -31,7 +31,7 @@ namespace Template.Core.Helpers
 
         private static CultureInfo GetClosestSupportedCulture(string code)
         {
-            if (string.IsNullOrEmpty(code))
+            if (code.IsNullOrEmpty())
             {
                 return SupportedCultures[DefaultCultureName];
             }

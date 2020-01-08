@@ -44,10 +44,7 @@ namespace Template.Core.Services
             }
 
             var response = await this.SendMessage(message);
-            if (!response.IsSuccessStatusCode)
-            {
-                this.HandleException(settings, throwIfError, response);
-            }
+            this.HandleResponse(settings, throwIfError, response);
         }
 
         private async Task<MailjetResponse> SendMessage(JObject message)
@@ -80,8 +77,13 @@ namespace Template.Core.Services
             message.Add(Constants.Mailjet.Variables, variables);
         }
 
-        private void HandleException(EmailSettings settings, bool throwIfError, MailjetResponse response)
+        private void HandleResponse(EmailSettings settings, bool throwIfError, MailjetResponse response)
         {
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
             var errorText = this.localizer.GetAndApplyValues("MailjetError", settings.Subject, settings.ToEmail);
             var emailSenderException = new MailjetException(errorText);
             this.logger.LogError(emailSenderException, response.GetData().ToString());
